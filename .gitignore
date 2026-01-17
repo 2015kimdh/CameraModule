@@ -34,3 +34,11 @@
 # Visual Studio IntelliSense Cache
 *.ipch
 ipch/
+.vs/
+*.user
+*.suo
+*.sdf
+*.opensdf
+Debug/
+Release/
+x64/

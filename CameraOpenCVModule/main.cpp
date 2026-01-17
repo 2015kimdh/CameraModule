@@ -10,8 +10,8 @@ int main()
 
 	std::cout << "=== 카메라 검색 시작 ===\n" << std::endl;
 
-	// 카메라 스캔 함수 호출 (0번부터 9번 포트까지 검사)
-	int count = camera_manager.ScanCameras(foundIndices, 10);
+	// 카메라 스캔 함수 호출
+	int count = camera_manager.ScanCameras(foundIndices);
 
 	std::cout << "=== 검색 결과 ===" << std::endl;
 	std::cout << "총 발견된 카메라 개수: " << count << "개" << std::endl;

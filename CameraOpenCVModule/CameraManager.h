@@ -13,6 +13,7 @@ class CameraManager
 {
 private:
 	static const int MAX_CAMERAS = 2;
+	const std::string UNKNOWN_DEVICE = "Unknown Device";
 
 	std::thread* _workers[MAX_CAMERAS];
 	std::atomic<bool> _isRunning[MAX_CAMERAS];
@@ -29,7 +30,7 @@ public:
 	/// <summary>
 	/// 사용 가능한 카메라 장치 검색
 	/// </summary>
-	int ScanCameras(int* outIndices, int maxCheck);
+	int ScanCameras(int* outDevices);
 
 	/// <summary>
 	/// 인덱스에 해당하는 카메라의 이름을 가져오는 함수
