@@ -24,16 +24,29 @@ int main()
 			std::string camName = camera_manager.GetCameraName(deviceIndex);
 
 			std::cout << "  [" << i << "] Device Index " << deviceIndex
-				<< " : " << camName << std::endl;
+				<< " : " << camName << '\n';
+
+			camera_manager.StartCamera(i, deviceIndex, 640, 480, 30);
+		}
+
+		std::cout << "\n========================================" << std::endl;
+		std::cout << "   모든 카메라가 실행되었습니다." << std::endl;
+		std::cout << "   새로운 창(Window)에서 영상을 확인하세요." << std::endl;
+		std::cout << "   프로그램을 종료하려면 아무 키나 누르세요..." << std::endl;
+		std::cout << "========================================" << std::endl;
+
+		system("pause");
+
+		for (int i = 0; i < count; i++)
+		{
+			camera_manager.StopCamera(i);
 		}
 	}
 	else {
 		std::cout << "  - 연결된 카메라가 없습니다." << std::endl;
+		system("pause");
 	}
 
-	// ▼▼▼ 이 코드를 추가하세요 ▼▼▼
-	system("pause");
-	// ▲▲▲ "계속하려면 아무 키나 누르십시오..." 가 뜨고 멈춥니다.
 
 	return 0;
 }
