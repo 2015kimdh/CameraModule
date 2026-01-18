@@ -13,6 +13,8 @@ class CameraManager
 {
 private:
 	static const int MAX_CAMERAS = 2;
+	static const int TOP_CAMERA = 0;
+	static const int SIDE_CAMERA = 1;
 	const std::string UNKNOWN_DEVICE = "Unknown Device";
 
 	std::thread* _workers[MAX_CAMERAS];
@@ -52,10 +54,11 @@ public:
 	// 인덱스의 카메라를 정지
 	void StopCamera(int camIndex);
 
-	/*/// <summary>
-	/// 인덱스에 해당하는 카메라의 프레임 가져오는 함수
-	/// <summary>
-	bool GetFrameFromCamera(int camIndex, unsigned char* outBuffer, int width, int height);*/
+	// 인덱스(0, 1...)를 주면 고유 ID(Device Path)를 반환
+	std::string GetPathByIndex(int index);
+
+	// 고유 ID(Device Path)를 주면 현재 인덱스(0, 1...)를 반환 (못 찾으면 -1)
+	int GetIndexByPath(const std::string& targetPath);
 
 	/// <summary>
 	/// 인덱스에 해당하는 카메라에 대한 실제 작업을 실행하는 루프 함수

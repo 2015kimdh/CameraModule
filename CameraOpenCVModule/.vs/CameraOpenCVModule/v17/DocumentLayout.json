@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|solutionrelative:CameraManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|F:\\CameraModule\\CameraOpenCVModule\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|F:\\CameraModule\\CameraOpenCVModule\\CameraManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|solutionrelative:CameraManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|F:\\CameraModule\\CameraOpenCVModule\\TripleBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|solutionrelative:TripleBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|F:\\CameraModule\\CameraOpenCVModule\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7A86416C-8701-4B4F-A211-5FAC7638B177}|CameraOpenCVModule.vcxproj|F:\\CameraModule\\CameraOpenCVModule\\Model.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -34,13 +34,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "main.cpp",
               "DocumentMoniker": "F:\\CameraModule\\CameraOpenCVModule\\main.cpp",
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "F:\\CameraModule\\CameraOpenCVModule\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-01-16T12:28:38.046Z",
               "EditorCaption": ""
@@ -53,27 +53,27 @@
               "RelativeDocumentMoniker": "CameraManager.cpp",
               "ToolTip": "F:\\CameraModule\\CameraOpenCVModule\\CameraManager.cpp",
               "RelativeToolTip": "CameraManager.cpp",
-              "ViewState": "AgIAAK4AAAAAAAAAAAAuwGwBAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAIoBAAAAAAAAAAAuwKEBAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-01-16T11:57:44.705Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "CameraManager.h",
               "DocumentMoniker": "F:\\CameraModule\\CameraOpenCVModule\\CameraManager.h",
               "RelativeDocumentMoniker": "CameraManager.h",
               "ToolTip": "F:\\CameraModule\\CameraOpenCVModule\\CameraManager.h",
               "RelativeToolTip": "CameraManager.h",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADwAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-01-18T07:55:23.059Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "TripleBuffer.h",
               "DocumentMoniker": "F:\\CameraModule\\CameraOpenCVModule\\TripleBuffer.h",
               "RelativeDocumentMoniker": "TripleBuffer.h",
@@ -81,7 +81,8 @@
               "RelativeToolTip": "TripleBuffer.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-01-16T11:50:46.025Z"
+              "WhenOpened": "2026-01-16T11:50:46.025Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
