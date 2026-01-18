@@ -1,11 +1,11 @@
 #pragma once
 
+#include <opencv2/opencv.hpp>
 #include "Model.h"
 #include "TripleBuffer.h"
 #include <thread>
 #include <atomic>
 #include <string>
-#include <dshow.h>
 #pragma comment(lib, "strmiids")
 #pragma comment(lib, "ole32")
 
@@ -24,6 +24,14 @@ private:
 
 	CameraManager();
 	~CameraManager();
+
+	void SetVideoCapture(cv::VideoCapture* capture, int width, int height, int fps);
+
+	void ResizeFrame(cv::Mat* frame, cv::Mat* smallFrame, int reqW, int reqH);
+
+	double GetActualFrameAspect(const cv::VideoCapture* capture);
+
+	bool IsAspectZero(const cv::VideoCapture* capture, int camIndex);
 
 public:
 	static CameraManager& Instance();

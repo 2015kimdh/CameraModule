@@ -4,7 +4,9 @@
 #include <cstdio>
 #include <iostream>
 #include <dshow.h>
+#include <algorithm>
 
+#pragma region Private
 CameraManager::CameraManager()
 {
 	for (int i = 0; i < MAX_CAMERAS; i++)
@@ -19,6 +21,88 @@ CameraManager::~CameraManager()
 	
 }
 
+void CameraManager::SetVideoCapture(cv::VideoCapture* capture, int width, int height, int fps)
+{
+    // 해상도 변경이 잘 안 될 때, 포맷을 MJPG로 먼저 설정하면 잘 먹히는 경우가 많음
+    capture->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+
+    // 요청 해상도 및 FPS 설정 요청
+    capture->set(cv::CAP_PROP_FRAME_WIDTH, width);
+    capture->set(cv::CAP_PROP_FRAME_HEIGHT, height);
+    capture->set(cv::CAP_PROP_FPS, fps);
+
+    // 실제로 적용된 해상도를 확인하기
+    // 하드웨어가 지원하지 않는 해상도를 요청하면 가장 가까운 다른 값으로 설정
+    // 비율이 깨지는지 확인하기 위해 실제 값을 로그로 찍어보기
+    int actualWidth = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_WIDTH));
+    int actualHeight = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_HEIGHT));
+
+    std::cout << R"(    - 요청: )" << width << " x " << height << '\n';
+    std::cout << R"(    - 실제: )" << actualWidth << " x " << actualHeight << '\n';
+}
+
+void CameraManager::ResizeFrame(cv::Mat* frame, cv::Mat* smallFrame, int reqW, int reqH)
+{
+    int srcW = frame->cols;
+    int srcH = frame->rows;
+
+    double scaleW = static_cast<double>(reqW) / srcW;
+    double scaleH = static_cast<double>(reqH) / srcH;
+
+    double scale = min(scaleW, scaleH);
+
+    if (scale < 1.0)
+    {
+        int newWidth = static_cast<int>(srcW * scale);
+        int newHeight = static_cast<int>(srcH * scale);
+
+        // 계산된 크기가 0이 아니어야 함
+        if (newWidth > 0 && newHeight > 0)
+        {
+            cv::resize(*frame, *smallFrame, cv::Size(newWidth, newHeight), 0, 0, cv::INTER_LINEAR);
+        }
+        else
+        {
+            frame->copyTo(*smallFrame); // 너무 작아지면 그냥 원본 사용
+            // 참조형식으로 얕은 복사를 하면 원본을 그대로 가리키는 효과가 일어나 원본을 다시쓰려고 지워버리면
+            // 참조 에러가 발생함
+        }
+    }
+    else
+        frame->copyTo(*smallFrame);
+}
+
+double CameraManager::GetActualFrameAspect(const cv::VideoCapture* capture)
+{
+    // 실제로 적용된 해상도를 확인하기
+    // 하드웨어가 지원하지 않는 해상도를 요청하면 가장 가까운 다른 값으로 설정
+    // 비율이 깨지는지 확인하기 위해 실제 값을 로그로 찍어보기
+    int actualWidth = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_WIDTH));
+    int actualHeight = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_HEIGHT));
+
+    // 비율 계산 (비율 유지를 위해)
+    // 새 프레임의 비율 적용을 위한 aspect
+    return static_cast<double>(actualWidth / actualHeight);
+}
+
+bool CameraManager::IsAspectZero(const cv::VideoCapture* capture, int camIndex)
+{
+    // 실제로 적용된 해상도를 확인하기
+    // 하드웨어가 지원하지 않는 해상도를 요청하면 가장 가까운 다른 값으로 설정
+    // 비율이 깨지는지 확인하기 위해 실제 값을 로그로 찍어보기
+    int actualWidth = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_WIDTH));
+    int actualHeight = static_cast<int>(capture->get(cv::CAP_PROP_FRAME_HEIGHT));
+
+    // [안전장치 1] 카메라가 해상도를 0으로 반환하면 강제 종료 (나누기 에러 방지)
+    if (actualWidth <= 0 || actualHeight <= 0)
+        return true;
+    else
+		return false;
+}
+
+#pragma endregion Private
+
+#pragma region Public
 CameraManager& CameraManager::Instance()
 {
 	static CameraManager instance;
@@ -234,6 +318,10 @@ void CameraManager::WorkerLoop(int camIndex, int deviceIndex, int reqW, int reqH
     // 카메라 열기
     cv::VideoCapture capture;
     capture.open(deviceIndex, cv::CAP_DSHOW);
+    auto lastTime = std::chrono::high_resolution_clock::now();
+    double actualFps = 0.0;
+
+    int frameCount = 0;
 
     // 못 열었다
     if (!capture.isOpened())
@@ -243,40 +331,74 @@ void CameraManager::WorkerLoop(int camIndex, int deviceIndex, int reqW, int reqH
         return;
     }
 
-    // 요청 해상도 및 FPS 설정 요청
-    capture.set(cv::CAP_PROP_FRAME_WIDTH, reqW);
-    capture.set(cv::CAP_PROP_FRAME_HEIGHT, reqH);
-    capture.set(cv::CAP_PROP_FPS, fps);
+    // FPS, width, height 설정
+    SetVideoCapture(&capture, reqW, reqH, fps);
 
-    // 실제로 적용된 해상도를 확인하기
-    // 하드웨어가 지원하지 않는 해상도를 요청하면 가장 가까운 다른 값으로 설정
-    // 비율이 깨지는지 확인하기 위해 실제 값을 로그로 찍어보기
-    int actualWidth = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH));
-    int actualHeight = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
+    if (IsAspectZero(&capture, camIndex))
+    {
+        std::cout << "[Fatal Error] 카메라 해상도가 0입니다. 장치를 확인하세요." << '\n';
+        _isRunning[camIndex] = false;
+        capture.release();
+        return;
+    }
 
-    std::cout << ">>> [" << camIndex << R"(번 카메라] 설정 완료)" << '\n';
-    std::cout << R"(    - 요청: )" << reqW << " x " << reqH << '\n';
-    std::cout << R"(    - 실제: )" << actualWidth << " x " << actualHeight << '\n';
-    
+
 	//======================여기까지 카메라 기본 세팅=================================
 
     std::string windowName = "Cam View " + std::to_string(camIndex);
-    cv::Mat frame;
+    cv::Mat rawFrame;
+    cv::Mat smallFrame;
 
     while (_isRunning[camIndex])
     {
-	    if (capture.read(frame))
-	    {
-		    if (!frame.empty())
-			    cv::imshow(windowName,frame);
-
-            if (cv::waitKey(1) == 27)
-                _isRunning[camIndex] = false;
-	    }
-        else
+        try
         {
-            // 프레임이 비었다면 잠깐 쉬기
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            if (capture.read(rawFrame))
+            {
+                if (!rawFrame.empty())
+                {
+                    ResizeFrame(&rawFrame, &smallFrame, reqW, reqH);
+
+                    // 추후 이 위치에 이미지 정보 갱신이 들어갈 예정
+                    cv::imshow(windowName, smallFrame);
+
+                    if (cv::waitKey(1) == 27)
+                        _isRunning[camIndex] = false;
+
+                    frameCount++; // 프레임 1개 추가
+                    auto currentTime = std::chrono::high_resolution_clock::now();
+                    // 지난 시간(초 단위) 계산
+                    std::chrono::duration<double> elapsed = currentTime - lastTime;
+
+                    // 1초가 지났으면 FPS 갱신
+                    if (elapsed.count() >= 1.0)
+                    {
+                        actualFps = frameCount / elapsed.count();
+
+                        // 콘솔에 출력 (나중에는 변수에 저장해서 Unity로 보낼 수도 있음)
+                        std::cout << "[Cam " << camIndex << "] 실제 FPS: " << actualFps << '\n';
+
+                        // 카운터 및 타이머 초기화
+                        frameCount = 0;
+                        lastTime = currentTime;
+                    }
+                }
+            }
+            else
+            {
+                // 프레임이 비었다면 잠깐 쉬기
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
+    	catch (const cv::Exception& e)
+		{
+			// OpenCV 에러가 발생하면 여기서 잡힙니다. (프로그램 안 꺼짐)
+			std::cout << "[OpenCV Error Skip] " << e.what() << '\n';
+		}
+        catch (const std::exception& e)
+        {
+            // 기타 C++ 에러
+            std::cout << "[System Error Skip] " << e.what() << '\n';
         }
     }
 
@@ -284,3 +406,4 @@ void CameraManager::WorkerLoop(int camIndex, int deviceIndex, int reqW, int reqH
     capture.release();
     std::cout << ">>> [" << camIndex << R"(번 카메라] 종료됨.)" << '\n';
 }
+#pragma endregion Public

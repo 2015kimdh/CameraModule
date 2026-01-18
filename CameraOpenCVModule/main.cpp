@@ -26,7 +26,7 @@ int main()
 			std::cout << "  [" << i << "] Device Index " << deviceIndex
 				<< " : " << camName << '\n';
 
-			camera_manager.StartCamera(i, deviceIndex, 640, 480, 30);
+			camera_manager.StartCamera(i, deviceIndex, 480, 320, 60);
 		}
 
 		std::cout << "\n========================================" << std::endl;
